@@ -1,0 +1,111 @@
+          if (viewMode === 'list') {
+            return (
+              <div
+                key={cmd.id}
+                className={`p-3.5 rounded-xl border transition flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-md ${
+                  editingCommandId === cmd.id ? 'ring-2 ring-[var(--theme-accent,#00f0ff)]' : ''
+                }`}
+                style={{
+                  backgroundColor: 'var(--theme-card, #020b18)',
+                  borderColor: 'var(--theme-border, #003865)',
+                  borderLeftWidth: '4px',
+                  borderLeftColor: cmdColor
+                }}
+              >
+                {/* Left Section: Name, Command Tag & Category Badge */}
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span 
+                    className="px-3 py-1 rounded-full text-xs font-mono font-black uppercase shrink-0 shadow cursor-pointer hover:scale-105 transition-transform"
+                    style={{ backgroundColor: cmdColor, color: getContrastYIQ(cmdColor) }}
+                    onClick={() => onTestCommand(cmd)}
+                    title="Click to test trigger"
+                  >
+                    ⚡ !{cmd.command}
+                  </span>
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 
+                        className={`text-sm font-bold truncate ${cmd.enabled === false ? 'opacity-40 line-through' : ''}`}
+                        style={{ color: 'var(--theme-text-main, #ffffff)' }}
+                      >
+                        {cmd.displayName}
+                      </h4>
+                      <span 
+                        className="text-[10px] px-2 py-0.5 rounded font-mono border"
+                        style={{
+                          backgroundColor: 'var(--theme-bg, #0a2540)',
+                          color: 'var(--theme-muted, #80c8ff)',
+                          borderColor: 'var(--theme-border, #003865)'
+                        }}
+                      >
+                        {cmd.category || 'Preset'}
+                      </span>
+                      {cmd.animationStyle && (
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-purple-950/80 text-purple-300 font-mono border border-purple-800 flex items-center gap-1">
+                          <Wind className="w-3 h-3 text-purple-400" />
+                          <span>{cmd.animationStyle} ({cmd.animationSpeed || 1.5}s)</span>
+                        </span>
+          )}
+
+                      {/* Trigger Behavior Emoji Indicators */}
+                      <div className="flex items-center gap-1 flex-wrap">
+                        {getTriggerBehaviorEmojiButtons(cmd).map((b, idx) => (
+                          <span
+                            key={idx}
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-mono border shadow-sm cursor-help hover:scale-110 transition-transform flex items-center justify-center ${b.bg}`}
+                            title={b.label}
+                          >
+                            {b.emoji}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-xs truncate mt-0.5" style={{ color: 'var(--theme-muted, #94a3b8)' }}>
+                      {cmd.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right Section: Controls & Actions */}
+                <div className="flex items-center gap-1.5 shrink-0 self-end md:self-auto font-mono text-xs flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => onTestCommand(cmd)}
+                    className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 font-bold flex items-center gap-1 cursor-pointer transition text-[11px]"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <span>Test</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onAddCommand({ ...cmd, enabled: cmd.enabled === false ? true : false })}
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-black uppercase transition-all flex items-center gap-1 border cursor-pointer ${
+                      cmd.enabled !== false
+                        ? 'bg-emerald-500/30 text-emerald-300 border-emerald-400/80'
+                        : 'bg-rose-950/80 text-rose-300 border-rose-500/70'
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${cmd.enabled !== false ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'}`} />
+                    <span>{cmd.enabled !== false ? 'ON' : 'OFF'}</span>
+                  </button>
+
+                  {/* Export Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleExportCardTrigger(cmd)}
+                    className="px-2 py-1 rounded-lg bg-amber-950/80 hover:bg-amber-900/90 text-amber-200 border border-amber-500/60 font-bold flex items-center gap-1 cursor-pointer transition text-[10px]"
+                    title="Export this overlay trigger to JSON file & clipboard"
+                  >
+                    <Download className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="hidden sm:inline">Export</span>
+                  </button>
+
+                  {/* Import Button */}
+                  <button
+                    type="button"
+                    onClick={() => triggerCardImportFile(cmd.id)}
+                    className="px-2 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/90 text-emerald-200 border border-emerald-500/60 font-bold flex items-center gap-1 cursor-pointer transition text-[10px]"
+                    title="Import & overwrite this overlay trigger from a JSON file"
+                  >
