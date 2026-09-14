@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: notfound-grid-dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      # Add any other third-party API keys or variables here if needed
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
